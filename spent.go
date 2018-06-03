@@ -20,6 +20,15 @@ type (
 		// writeInterval is how often a report should be produced in the absence of change.
 		writeInterval time.Duration
 	}
+
+	Report struct {
+		At         time.Time
+		Elapsed    time.Duration
+		Title      string
+		App        string
+		AppContext string
+		AppDetail  string
+	}
 )
 
 // NewReporter returns a new Reporter.
@@ -31,24 +40,38 @@ func NewReporter(writeInterval time.Duration) *Reporter {
 	}
 }
 
+func newReport(at time.Time, title string, elapsed time.Duration) *Report {
+	rpt := &Report{At: at, Title: title, Elapsed: elapsed}
+	rpt.extractAppFields()
+	return rpt
+}
+
+func (rpt *Report) extractAppFields() {
+	appfields := parseTitle(rpt.Title)
+	if len(appfields) > 2 {
+		rpt.AppDetail = appfields[2]
+	}
+	if len(appfields) > 1 {
+		rpt.AppContext = appfields[1]
+	}
+	if len(appfields) > 0 {
+		rpt.App = appfields[0]
+	}
+}
+
 // GetReport returns nil if there's nothing to report, otherwise a string
 // slice describing what's happened.  See README.md for details of slice
 // contents.
-func (r *Reporter) GetReport(title string) []string {
+func (r *Reporter) GetReport(title string) *Report {
 	now := time.Now()
 	delta := now.Sub(r.lastReport)
 	if title == r.lastActive && delta < r.writeInterval {
 		return nil
 	}
 
-	var result []string
+	var result *Report
 	if r.lastActive != "" {
-		base := []string{
-			now.Format(time.RFC3339),
-			fmt.Sprintf("%.0f", delta.Seconds()),
-			r.lastActive,
-		}
-		result = append(base, parseTitle(r.lastActive)...)
+		result = newReport(now, r.lastActive, delta)
 	}
 	r.lastReport, r.lastActive = now, title
 	return result

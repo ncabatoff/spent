@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -37,15 +38,29 @@ func main() {
 		if saverOn || idle > idleCutoff {
 			title = "idle"
 		}
-		row := rpt.GetReport(title)
-		if row != nil {
-			writeReport(wcsv, row)
+		rpt := rpt.GetReport(title)
+		if rpt != nil {
+			writeReport(wcsv, rpt)
 		}
 		time.Sleep(pollInterval)
 	}
 }
 
-func writeReport(wcsv *csv.Writer, row []string) {
+func writeReport(wcsv *csv.Writer, rpt *spent.Report) {
+	row := []string{
+		rpt.At.Format(time.RFC3339),
+		fmt.Sprintf("%.0f", rpt.Elapsed.Seconds()),
+		rpt.Title,
+	}
+	if rpt.App != "" {
+		row = append(row, rpt.App)
+		if rpt.AppContext != "" {
+			row = append(row, rpt.AppContext)
+			if rpt.AppDetail != "" {
+				row = append(row, rpt.AppDetail)
+			}
+		}
+	}
 	err := wcsv.Write(row)
 	if err != nil {
 		log.Fatalf("Unable to write CSV: %v", err)
