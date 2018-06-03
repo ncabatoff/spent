@@ -1,0 +1,32 @@
+builds:
+  - main: cmd/spent/main.go
+    binary: spent
+    flags: -tags netgo
+    goos:
+      - linux
+    goarch:
+      - amd64
+  - main: cmd/spent-exporter/main.go
+    binary: spent-exporter
+    flags: -tags netgo
+    goos:
+      - linux
+    goarch:
+      - amd64
+nfpm:
+  homepage: https://github.com/ncabatoff/spent
+  maintainer: nick.cabatoff+spentexp@gmail.com
+  description: Command-line tool (and Prometheus exporter) to report on active window
+  license: Apache
+  formats:
+    - deb
+    - rpm
+  bindir: /usr/bin
+  dependencies:
+    - xprintidle
+    - xdotool
+    - gnome-screensaver
+
+release:
+  draft: true
+  prerelease: true

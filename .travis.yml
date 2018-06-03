@@ -7,3 +7,10 @@ script:
 - make container
 - docker images | grep ncabatoff/spent-amd64
 - make test
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y rpm
+
+after_success:
+  - test -n "$TRAVIS_TAG" && curl -sL http://git.io/goreleaser | bash
