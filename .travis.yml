@@ -1,0 +1,9 @@
+language: go
+services:
+  - docker
+script:
+- make build
+- test -f bin/amd64/spent
+- make container
+- docker images | grep ncabatoff/spent-amd64
+- make test
