@@ -3,8 +3,11 @@
 Spent is inspired by [nf's spent](https://gist.github.com/nf/7d378cb9417144caf272),
 but written for Linux and with my own spin on it. 
 
-It keeps track of when the user is idle or not, and when not idle, what window is focused.
+`spent` keeps track of when the user is idle or not, and when not idle, what window is focused.
 A CSV report is continuously emitted to stdout.
+
+`spent-exporter` is a Prometheus exporter that reports the
+same information but with less detail, since Prometheus doesn't handle high-cardinality data well.
 
 ## Details 
 

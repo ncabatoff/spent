@@ -1,16 +1,26 @@
 language: go
+
 services:
   - docker
-script:
-- make build
-- test -f bin/amd64/spent
-- make container
-- docker images | grep ncabatoff/spent-amd64
-- make test
+
+env:
+  - DEP_VERSION="0.4.1"
 
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y rpm
+  - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
+  - chmod +x $GOPATH/bin/dep
+
+install:
+  - dep ensure
+
+script:
+  - make build
+  - test -f bin/amd64/spent
+  - make container
+  - docker images | grep ncabatoff/spent-amd64
+  - make test
 
 after_success:
   - test -n "$TRAVIS_TAG" && curl -sL http://git.io/goreleaser | bash
