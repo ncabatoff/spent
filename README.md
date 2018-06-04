@@ -27,7 +27,7 @@ Additional fields that may be included, as detailed below:
 The app type `browser` is used if the window title ends in " - Chromium".
 In that case app context is the website open, and app detail is the path part of the URL.
 
-To get app context and app detail you must install the "Url in title" Chrome extension, 
+To get app context and app detail you must install the [Url in title](https://chrome.google.com/webstore/detail/url-in-title/ignpacbgnbnkaiooknalneoeladjnfgb) Chrome extension, 
 and configure it with format 
 
 ```
